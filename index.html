@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gara Ginnastica Ritmica | 22.03.2026</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Overlay Password -->
+    <div id="login-overlay">
+        <div class="login-box">
+            <img src="assets/logo.png" alt="Logo" class="logo" style="width: 250px;">
+            <h3>Area Riservata</h3>
+            <p>Inserisci la password fornita per accedere alle foto.</p>
+            <input type="password" id="password-input" placeholder="Password">
+            <button class="btn" onclick="checkPassword()">Entra</button>
+            <p id="error-msg" style="color: red; display: none; font-size: 0.8rem; margin-top: 10px;">Password errata</p>
+        </div>
+    </div>
+
+    <!-- Modale Galleria -->
+    <div id="gallery-modal">
+        <span class="close-modal" onclick="closeGallery()">&times;</span>
+        <div id="gallery-counter"></div>
+        <img id="gallery-image" src="" alt="Foto Gara">
+        <div class="filename-wrapper">
+            <div id="file-name">IMG_0001.JPG</div>
+            <button class="copy-btn" onclick="copyFileName()">Copia</button>
+        </div>
+        <div class="modal-nav">
+            <button class="nav-btn" onclick="prevPhoto()">&#10094;</button>
+            <button class="nav-btn" onclick="nextPhoto()">&#10095;</button>
+        </div>
+    </div>
+
+    <header>
+        <img src="assets/logo.png" alt="Logo" class="logo">
+        <h1>GARA GINNASTICA RITMICA</h1>
+        <p class="date">22 Marzo 2026</p>
+    </header>
+
+    <main>
+        <section class="intro">
+            <h2>Galleria Fotografica</h2>
+            <p>Seleziona il turno di gara per vedere i provini delle <strong>fotografie professionali</strong> scattate durante l'evento.<br>Segnati il <strong>nome del file</strong> che trovi sotto ogni foto per ordinarla.</p>
+        </section>
+
+        <div class="schedule">
+            <div class="turn-card">
+                <div class="time">ORE 09:00</div>
+                <h3>1ª Fascia Base</h3>
+                <p>Individuale e Squadre</p>
+                <button class="btn" onclick="openGallery('turno1')">Vedi Foto</button>
+            </div>
+
+            <div class="turn-card">
+                <div class="time">ORE 11:45</div>
+                <h3>2ª Fascia Avanzato</h3>
+                <p>Individuale e Squadre</p>
+                <button class="btn" onclick="openGallery('turno2')">Vedi Foto</button>
+            </div>
+
+            <div class="turn-card">
+                <div class="time">ORE 14:00</div>
+                <h3>2ª Fascia Base</h3>
+                <p>Individuale e Squadre</p>
+                <button class="btn" onclick="openGallery('turno3')">Vedi Foto</button>
+            </div>
+
+            <div class="turn-card">
+                <div class="time">ORE 16:30</div>
+                <h3>1ª Fascia Avanzato / 3ª Base</h3>
+                <p>Individuale e Squadre</p>
+                <button class="btn" onclick="openGallery('turno4')">Vedi Foto</button>
+            </div>
+        </div>
+
+        <section class="info-acquisto">
+            <h3>Listino e Ordini</h3>
+            
+            <table class="price-table">
+                <tr>
+                    <th>Quantità</th>
+                    <th>Prezzo</th>
+                </tr>
+                <tr>
+                    <td>1 Foto</td>
+                    <td>8,00 €</td>
+                </tr>
+                <tr>
+                    <td>3 Foto</td>
+                    <td>18,00 €</td>
+                </tr>
+                <tr>
+                    <td>5 Foto</td>
+                    <td>25,00 €</td>
+                </tr>
+                <tr>
+                    <td>10 Foto</td>
+                    <td>40,00 €</td>
+                </tr>
+                <tr>
+                    <td>20 Foto</td>
+                    <td>60,00 €</td>
+                </tr>
+            </table>
+
+            <h3>Come ordinare</h3>
+            <ul>
+                <li>Scegli le tue foto preferite e segna il <strong>nome del file</strong>.</li>
+                <li>Invia la lista con i nomi dei file via mail a <a href="mailto:irene.gambuzzi@gmail.com" class="mail-link">irene.gambuzzi@gmail.com</a> o tramite messaggio WhatsApp al numero <strong>34550 21840</strong>.</li>
+                <li>Riceverai le istruzioni per il pagamento in risposta.</li>
+                <li>Una volta completato il pagamento, riceverai i file in alta risoluzione e senza logo.</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Irene Gambuzzi Fotografia</p>
+        <!-- Inserisci qui il link al tuo profilo vero -->
+        <a href="https://www.instagram.com/odioirenegambuzzi/" target="_blank" class="social-link">Seguimi su Instagram</a>
+    </footer>
+
+    <script>
+        // --- CONFIGURAZIONE ---
+        const PASSWORD_CORRETTA = "ritmica2026"; // Password da dare ai genitori
+        
+        // Simulazione database foto (Dovrai sostituire questi nomi con i tuoi file reali)
+        // Esempio: "foto_turno1/IMG_001.jpg", "foto_turno1/IMG_002.jpg" ecc.
+        const photos = {
+            // ORE 09:00 - 1ª Fascia Base
+            'turno1': ['foto/turno 1_444.jpg'],
+            // ORE 11:45 - 2ª Fascia Avanzato
+            'turno2': ['https://via.placeholder.com/800x600?text=Turno2_Foto1', 'https://via.placeholder.com/800x600?text=Turno2_Foto2'],
+            // ORE 14:00 - 2ª Fascia Base
+            'turno3': ['https://via.placeholder.com/800x600?text=Turno3_Foto1', 'https://via.placeholder.com/800x600?text=Turno3_Foto2'],
+            // ORE 16:30 - 1ª Fascia Avanzato / 3ª Base
+            'turno4': ['https://via.placeholder.com/800x600?text=Turno4_Foto1', 'https://via.placeholder.com/800x600?text=Turno4_Foto2']
+        };
+
+        let currentTurn = [];
+        let currentIndex = 0;
+
+        // --- LOGICA LOGIN ---
+        function checkPassword() {
+            const input = document.getElementById('password-input').value;
+            if (input === PASSWORD_CORRETTA) {
+                document.getElementById('login-overlay').style.display = 'none';
+            } else {
+                document.getElementById('error-msg').style.display = 'block';
+            }
+        }
+
+        // Consenti invio con tasto Enter
+        document.getElementById('password-input').addEventListener("keypress", function(event) {
+            if (event.key === "Enter") checkPassword();
+        });
+
+        // --- LOGICA GALLERIA ---
+        function openGallery(turnKey) {
+            currentTurn = photos[turnKey];
+            if (!currentTurn || currentTurn.length === 0) {
+                alert("Foto non ancora disponibili per questo turno.");
+                return;
+            }
+            currentIndex = 0;
+            updateModalImage();
+            document.getElementById('gallery-modal').style.display = 'flex';
+        }
+
+        function closeGallery() {
+            document.getElementById('gallery-modal').style.display = 'none';
+        }
+
+        function updateModalImage() {
+            const imgUrl = currentTurn[currentIndex];
+            const imgElement = document.getElementById('gallery-image');
+            const fileNameElement = document.getElementById('file-name');
+            const counterElement = document.getElementById('gallery-counter');
+
+            imgElement.src = imgUrl;
+            
+            // Estrae il nome del file dall'URL per mostrarlo ai genitori
+            // Se usi placeholder usa l'URL intero, se usi file reali mostrerà solo il nome
+            let filename = imgUrl.substring(imgUrl.lastIndexOf('/') + 1);
+            // Rimuove parametri extra se presenti (opzionale)
+            if(filename.includes('?')) filename = filename.split('?')[0];
+            
+            fileNameElement.innerText = filename;
+            counterElement.innerText = `Foto ${currentIndex + 1} di ${currentTurn.length}`;
+        }
+
+        function copyFileName() {
+            const fileName = document.getElementById('file-name').innerText;
+            navigator.clipboard.writeText(fileName).then(() => {
+                const copyBtn = document.querySelector('.copy-btn');
+                const originalText = copyBtn.innerText;
+                copyBtn.innerText = 'Copiato!';
+                copyBtn.style.background = '#7d816a';
+                setTimeout(() => {
+                    copyBtn.innerText = originalText;
+                    copyBtn.style.background = '#969B80';
+                }, 1500);
+            }).catch(err => {
+                console.error('Errore nel copiare il testo: ', err);
+            });
+        }
+
+        function nextPhoto() {
+            if (currentIndex < currentTurn.length - 1) {
+                currentIndex++;
+                updateModalImage();
+            } else {
+                // Opzionale: torna all'inizio o ferma
+                currentIndex = 0; // Loop
+                updateModalImage();
+            }
+        }
+
+        function prevPhoto() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateModalImage();
+            } else {
+                currentIndex = currentTurn.length - 1; // Loop
+                updateModalImage();
+            }
+        }
+    </script>
+</body>
+</html>
