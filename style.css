@@ -142,6 +142,38 @@ footer {
 
 .price-table tr:last-child td { border-bottom: none; }
 
+/* Griglia Miniature */
+#grid-view {
+    display: none;
+    padding: 2rem 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    margin-top: 2rem;
+}
+
+.thumb-container {
+    aspect-ratio: 1/1;
+    overflow: hidden;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: #eee;
+}
+
+.thumb-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.thumb-container:hover img { transform: scale(1.1); }
+
 /* Galleria Modale (Lightbox) */
 #gallery-modal {
     display: none; /* Nascosto di default */
@@ -242,3 +274,22 @@ footer {
     text-decoration: none;
     word-break: break-all;
 }
+
+/* Messaggio Anti-Screenshot */
+#screenshot-warning {
+    display: none;
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    z-index: 3000;
+    text-align: center;
+    width: 320px;
+    border: 3px solid #969B80;
+}
+
+#screenshot-warning h3 { color: #969B80; margin-top: 0; }
+#screenshot-warning p { font-size: 0.9rem; margin-bottom: 1.5rem; }

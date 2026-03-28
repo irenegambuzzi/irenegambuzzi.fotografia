@@ -5,8 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gara Ginnastica Ritmica | 22.03.2026</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Impedisce la selezione del testo e il trascinamento delle immagini */
+        body {
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+        }
+    </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
     <!-- Overlay Password -->
     <div id="login-overlay">
@@ -35,13 +49,20 @@
         </div>
     </div>
 
+    <!-- Avviso Screenshot -->
+    <div id="screenshot-warning">
+        <h3>Ops! Hai provato a fare un'istantanea? 😉</h3>
+        <p>Queste immagini sono solo provini. Ordinando le tue foto preferite riceverai i file originali in alta risoluzione, senza loghi e bellissimi! <br><br>Grazie per rispettare il mio lavoro di fotografa :-)</p>
+        <button class="btn" onclick="closeWarning()">Ho capito!</button>
+    </div>
+
     <header>
         <img src="assets/logo.png" alt="Logo" class="logo">
         <h1>GARA GINNASTICA RITMICA</h1>
         <p class="date">22 Marzo 2026</p>
     </header>
 
-    <main>
+    <main id="main-content">
         <section class="intro">
             <h2>Galleria Fotografica</h2>
             <p>Seleziona il turno di gara per vedere i provini delle <strong>fotografie professionali</strong> scattate durante l'evento.<br>Segnati il <strong>nome del file</strong> che trovi sotto ogni foto per ordinarla.</p>
@@ -110,12 +131,19 @@
             <h3>Come ordinare</h3>
             <ul>
                 <li>Scegli le tue foto preferite e segna il <strong>nome del file</strong>.</li>
-                <li>Invia la lista con i nomi dei file via mail a <a href="mailto:irene.gambuzzi@gmail.com" class="mail-link">irene.gambuzzi@gmail.com</a> o tramite messaggio WhatsApp al numero <strong>34550 21840</strong>.</li>
+                <li>Invia la lista con i nomi dei file via mail a <a href="mailto:irene.gambuzzi@gmail.com" class="mail-link">irene.gambuzzi@gmail.com</a> o tramite messaggio WhatsApp al numero <strong>345 5021840</strong>.</li>
                 <li>Riceverai le istruzioni per il pagamento in risposta.</li>
                 <li>Una volta completato il pagamento, riceverai i file in alta risoluzione e senza logo.</li>
             </ul>
         </section>
     </main>
+
+    <!-- Vista Griglia (Nascosta inizialmente) -->
+    <section id="grid-view">
+        <button class="btn" onclick="backToSchedule()">&larr; Torna ai Turni</button>
+        <h2 id="grid-title" style="text-align: center; color: #969B80;"></h2>
+        <div class="photo-grid" id="photo-grid"></div>
+    </section>
 
     <footer>
         <p>&copy; 2026 Irene Gambuzzi Fotografia</p>
@@ -127,26 +155,31 @@
         // --- CONFIGURAZIONE ---
         const PASSWORD_CORRETTA = "ritmica2026"; // Password da dare ai genitori
         
-        // Simulazione database foto (Dovrai sostituire questi nomi con i tuoi file reali)
-        // Esempio: "foto_turno1/IMG_001.jpg", "foto_turno1/IMG_002.jpg" ecc.
         const photos = {
             // ORE 09:00 - 1ª Fascia Base
-            'turno1': ['foto/turno 1_444.jpg'],
+            'turno1': Array.from({ length: 1060 }, (_, i) => `foto/turno1/RITMICA__${String(i + 1).padStart(4, '0')}.jpg`),
             // ORE 11:45 - 2ª Fascia Avanzato
-            'turno2': ['https://via.placeholder.com/800x600?text=Turno2_Foto1', 'https://via.placeholder.com/800x600?text=Turno2_Foto2'],
+            'turno2': Array.from({ length: 690 }, (_, i) => `foto/turno2/RITMICA__${String(i + 1061).padStart(4, '0')}.jpg`),
             // ORE 14:00 - 2ª Fascia Base
-            'turno3': ['https://via.placeholder.com/800x600?text=Turno3_Foto1', 'https://via.placeholder.com/800x600?text=Turno3_Foto2'],
+            'turno3': Array.from({ length: 713 }, (_, i) => `foto/turno3/RITMICA__${String(i + 1751).padStart(4, '0')}.jpg`),
             // ORE 16:30 - 1ª Fascia Avanzato / 3ª Base
-            'turno4': ['https://via.placeholder.com/800x600?text=Turno4_Foto1', 'https://via.placeholder.com/800x600?text=Turno4_Foto2']
+            'turno4': Array.from({ length: 476 }, (_, i) => `foto/turno4/RITMICA__${String(i + 2464).padStart(4, '0')}.jpg`)
         };
 
         let currentTurn = [];
         let currentIndex = 0;
 
+        // Controlla se l'utente è già autenticato all'apertura della pagina
+        if (sessionStorage.getItem('auth_ritmica') === 'true') {
+            document.getElementById('login-overlay').style.display = 'none';
+        }
+
         // --- LOGICA LOGIN ---
         function checkPassword() {
             const input = document.getElementById('password-input').value;
             if (input === PASSWORD_CORRETTA) {
+                // Salva lo stato di autenticazione nella sessione
+                sessionStorage.setItem('auth_ritmica', 'true');
                 document.getElementById('login-overlay').style.display = 'none';
             } else {
                 document.getElementById('error-msg').style.display = 'block';
@@ -159,13 +192,41 @@
         });
 
         // --- LOGICA GALLERIA ---
+        function backToSchedule() {
+            document.getElementById('grid-view').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+
         function openGallery(turnKey) {
             currentTurn = photos[turnKey];
             if (!currentTurn || currentTurn.length === 0) {
                 alert("Foto non ancora disponibili per questo turno.");
                 return;
             }
-            currentIndex = 0;
+            
+            const gridContainer = document.getElementById('photo-grid');
+            gridContainer.innerHTML = ''; // Pulisce la griglia
+            
+            // Imposta titolo turno
+            const titles = { 'turno1': '1ª Fascia Base', 'turno2': '2ª Fascia Avanzato', 'turno3': '2ª Fascia Base', 'turno4': '1ª Fascia/3ª Base' };
+            document.getElementById('grid-title').innerText = titles[turnKey] || 'Galleria';
+
+            // Crea le miniature
+            currentTurn.forEach((imgUrl, index) => {
+                const div = document.createElement('div');
+                div.className = 'thumb-container';
+                div.onclick = () => openLightbox(index);
+                div.innerHTML = `<img src="${imgUrl}" loading="lazy" alt="Provino">`;
+                gridContainer.appendChild(div);
+            });
+
+            document.getElementById('main-content').style.display = 'none';
+            document.getElementById('grid-view').style.display = 'block';
+        }
+
+        function openLightbox(index) {
+            currentIndex = index;
             updateModalImage();
             document.getElementById('gallery-modal').style.display = 'flex';
         }
@@ -228,6 +289,44 @@
                 updateModalImage();
             }
         }
+
+        function showScreenshotWarning() {
+            document.getElementById('screenshot-warning').style.display = 'block';
+        }
+
+        function closeWarning() {
+            document.getElementById('screenshot-warning').style.display = 'none';
+        }
+
+        // Blocca tasti di scelta rapida comuni (Salva, Visualizza sorgente, PrintScreen)
+        document.addEventListener('keydown', function(e) {
+            // Navigazione tastiera per la galleria (migliora la fluidità)
+            if (document.getElementById('gallery-modal').style.display === 'flex') {
+                if (e.key === 'ArrowRight') {
+                    nextPhoto();
+                    return;
+                }
+                if (e.key === 'ArrowLeft') {
+                    prevPhoto();
+                    return;
+                }
+                if (e.key === 'Escape') {
+                    closeGallery();
+                    return;
+                }
+            }
+
+            if (
+                (e.ctrlKey && (e.key === 's' || e.key === 'u' || e.key === 'p')) || 
+                e.key === 'PrintScreen' || 
+                e.keyCode === 44 || // Altro codice per PrintScreen
+                (e.metaKey && e.shiftKey && (e.key === '3' || e.key === '4')) // Scorciatoie Mac
+            ) {
+                e.preventDefault();
+                showScreenshotWarning();
+                return false;
+            }
+        });
     </script>
 </body>
 </html>
