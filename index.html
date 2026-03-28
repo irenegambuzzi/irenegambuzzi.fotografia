@@ -56,7 +56,7 @@
         <button class="btn" onclick="closeWarning()">Ho capito!</button>
     </div>
 
-    <header>
+    <header onclick="backToSchedule()">
         <img src="assets/logo.png" alt="Logo" class="logo">
         <h1>GARA GINNASTICA RITMICA</h1>
         <p class="date">22 Marzo 2026</p>
@@ -140,7 +140,9 @@
 
     <!-- Vista Griglia (Nascosta inizialmente) -->
     <section id="grid-view">
-        <button class="btn" onclick="backToSchedule()">&larr; Torna ai Turni</button>
+        <div class="sticky-nav">
+            <button class="btn" onclick="backToSchedule()">&larr; Torna alla Home</button>
+        </div>
         <h2 id="grid-title" style="text-align: center; color: #969B80;"></h2>
         <div class="photo-grid" id="photo-grid"></div>
     </section>
@@ -193,6 +195,7 @@
 
         // --- LOGICA GALLERIA ---
         function backToSchedule() {
+            closeGallery(); // Chiude la modale se aperta
             document.getElementById('grid-view').style.display = 'none';
             document.getElementById('main-content').style.display = 'block';
             window.scrollTo(0, 0);
@@ -327,6 +330,16 @@
                 return false;
             }
         });
+
+        // Rileva quando la pagina perde visibilità (es. screenshot su iOS o cambio app)
+        document.addEventListener("visibilitychange", function() {
+            if (document.visibilityState === "hidden") {
+                showScreenshotWarning();
+            }
+        });
+
+        // Opzionale: rileva anche la perdita di focus della finestra
+        window.addEventListener("blur", showScreenshotWarning);
     </script>
 </body>
 </html>

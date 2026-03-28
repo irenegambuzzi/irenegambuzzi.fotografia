@@ -12,6 +12,7 @@ header {
     color: white;
     text-align: center;
     padding: 3rem 1rem;
+    cursor: pointer;
 }
 
 .logo {
@@ -148,6 +149,17 @@ footer {
     padding: 2rem 1rem;
     max-width: 1200px;
     margin: 0 auto;
+}
+
+.sticky-nav {
+    position: sticky;
+    top: 0;
+    background-color: rgba(253, 251, 247, 0.95);
+    padding: 10px;
+    z-index: 100;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 1rem;
+    text-align: center;
 }
 
 .photo-grid {
