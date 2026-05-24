@@ -3,21 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gara Ginnastica Ritmica | 22.03.2026</title>
+    <title>Irene Gambuzzi Fotografia | Gallerie</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Impedisce la selezione del testo e il trascinamento delle immagini */
-        body {
-            -webkit-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-        img {
-            -webkit-user-drag: none;
-            -khtml-user-drag: none;
-            -moz-user-drag: none;
-            -o-user-drag: none;
-        }
+        body { -webkit-user-select: none; -ms-user-select: none; user-select: none; }
+        img  { -webkit-user-drag: none; -khtml-user-drag: none; -moz-user-drag: none; -o-user-drag: none; }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -25,321 +18,568 @@
     <!-- Overlay Password -->
     <div id="login-overlay">
         <div class="login-box">
-            <img src="assets/logo.png" alt="Logo" class="logo" style="width: 250px;">
+            <img src="assets/logo.png" alt="Logo" style="width:220px;margin-bottom:0.5rem;">
             <h3>Area Riservata</h3>
             <p>Inserisci la password fornita per accedere alle foto.</p>
             <input type="password" id="password-input" placeholder="Password">
             <button class="btn" onclick="checkPassword()">Entra</button>
-            <p id="error-msg" style="color: red; display: none; font-size: 0.8rem; margin-top: 10px;">Password errata</p>
+            <p id="error-msg" style="color:#c0392b;display:none;font-size:0.8rem;margin-top:10px;">Password errata. Riprova.</p>
         </div>
     </div>
 
-    <!-- Modale Galleria -->
+    <!-- Lightbox -->
     <div id="gallery-modal">
         <span class="close-modal" onclick="closeGallery()">&times;</span>
         <div id="gallery-counter"></div>
-        <img id="gallery-image" src="" alt="Foto Gara">
-        <div class="filename-wrapper">
-            <div id="file-name">IMG_0001.JPG</div>
-            <button class="copy-btn" onclick="copyFileName()">Copia</button>
+        <img id="gallery-image" src="" alt="Foto">
+        <div class="filename-area" onclick="copyFileName()" title="Tocca per copiare">
+            <div class="filename-label-row">
+                <span class="filename-label">Nome del file</span>
+                <span class="filename-hint">Comunicalo alla fotografa per ordinarlo</span>
+            </div>
+            <div class="filename-copy-row">
+                <span id="file-name" class="filename-text"></span>
+                <span class="filename-copy-icon">&#x2398;</span>
+            </div>
         </div>
+        <div id="copy-toast" class="copy-toast">&#10003; Nome copiato!</div>
         <div class="modal-nav">
             <button class="nav-btn" onclick="prevPhoto()">&#10094;</button>
             <button class="nav-btn" onclick="nextPhoto()">&#10095;</button>
         </div>
+        <div id="gallery-progress"></div>
     </div>
 
-    <!-- Avviso Screenshot -->
+    <div id="screenshot-backdrop" onclick="closeWarning()"></div>
     <div id="screenshot-warning">
-        <h3>Ops! Hai provato a fare un'istantanea? 😉</h3>
-        <p>Queste immagini sono solo provini. Ordinando le tue foto preferite riceverai i file originali in alta risoluzione, senza loghi e bellissimi! <br><br>Grazie per rispettare il mio lavoro di fotografa :-)</p>
-        <button class="btn" onclick="closeWarning()">Ho capito!</button>
+        <h3>Ops! 😉</h3>
+        <p>Queste immagini sono solo provini. Ordinando le tue foto preferite riceverai i file originali in alta risoluzione, senza loghi e bellissimi!<br><br>Grazie per rispettare il mio lavoro.</p>
+        <button class="btn" onclick="closeWarning()">Ho capito</button>
     </div>
 
-    <header onclick="backToSchedule()">
+    <!-- Header (sempre visibile) -->
+    <header onclick="goToHome()">
         <img src="assets/logo.png" alt="Logo" class="logo">
-        <h1>GARA GINNASTICA RITMICA</h1>
-        <p class="date">22 Marzo 2026</p>
+        <div class="header-rule"></div>
+        <h1 id="header-title">Irene Gambuzzi Fotografia</h1>
+        <p class="date" id="header-date"></p>
     </header>
 
-    <main id="main-content">
-        <section class="intro">
-            <h2>Galleria Fotografica</h2>
-            <p>Seleziona il turno di gara per vedere i provini delle <strong>fotografie professionali</strong> scattate durante l'evento.<br>Segnati il <strong>nome del file</strong> che trovi sotto ogni foto per ordinarla.</p>
-        </section>
+    <!-- ================================================
+         Vista 1: Homepage
+         ================================================ -->
+    <div id="home-view">
 
-        <div class="schedule">
-            <div class="turn-card">
-                <div class="time">ORE 09:00</div>
-                <h3>1ª Fascia Base</h3>
-                <p>Individuale e Squadre</p>
-                <button class="btn" onclick="openGallery('turno1')">Vedi Foto</button>
+        <div class="home-intro">
+            <h2 class="intro-heading">Le Tue Gallerie</h2>
+            <p class="intro-sub">Seleziona l'evento per sfogliare i provini.<br>
+            Segnati il <strong>nome del file</strong> sotto ogni foto per poterla ordinare.</p>
+        </div>
+
+        <!-- Pannelli fisarmonica -->
+        <div class="events-panels" id="events-panels">
+            <div class="event-panel competition" onclick="openEvent('gara')">
+                <div class="panel-inner">
+                    <span class="panel-tag">Competizione</span>
+                    <div class="panel-body">
+                        <h2 class="panel-title">Gara di<br>Ginnastica Ritmica</h2>
+                        <p class="panel-date">22 Marzo 2026</p>
+                        <p class="panel-meta">4 turni &middot; 2.939 foto</p>
+                    </div>
+                    <div class="panel-cta">Scopri le foto <span class="panel-arrow">&#8594;</span></div>
+                </div>
             </div>
 
-            <div class="turn-card">
-                <div class="time">ORE 11:45</div>
-                <h3>2ª Fascia Avanzato</h3>
-                <p>Individuale e Squadre</p>
-                <button class="btn" onclick="openGallery('turno2')">Vedi Foto</button>
-            </div>
-
-            <div class="turn-card">
-                <div class="time">ORE 14:00</div>
-                <h3>2ª Fascia Base</h3>
-                <p>Individuale e Squadre</p>
-                <button class="btn" onclick="openGallery('turno3')">Vedi Foto</button>
-            </div>
-
-            <div class="turn-card">
-                <div class="time">ORE 16:30</div>
-                <h3>1ª Fascia Avanzato / 3ª Base</h3>
-                <p>Individuale e Squadre</p>
-                <button class="btn" onclick="openGallery('turno4')">Vedi Foto</button>
+            <div class="event-panel recital" onclick="openEvent('saggio')">
+                <div class="panel-inner">
+                    <span class="panel-tag">Saggio</span>
+                    <div class="panel-body">
+                        <h2 class="panel-title">Saggio di<br>Fine Anno</h2>
+                        <p class="panel-date">21 Maggio 2026</p>
+                        <p class="panel-meta">Tutti i gruppi insieme</p>
+                    </div>
+                    <div class="panel-cta">Scopri le foto <span class="panel-arrow">&#8594;</span></div>
+                </div>
             </div>
         </div>
 
-        <section class="info-acquisto">
-            <h3>Listino e Ordini</h3>
-            
-            <table class="price-table">
-                <tr>
-                    <th>Quantità</th>
-                    <th>Prezzo</th>
-                </tr>
-                <tr>
-                    <td>1 Foto</td>
-                    <td>8,00 €</td>
-                </tr>
-                <tr>
-                    <td>3 Foto</td>
-                    <td>18,00 €</td>
-                </tr>
-                <tr>
-                    <td>5 Foto</td>
-                    <td>25,00 €</td>
-                </tr>
-                <tr>
-                    <td>10 Foto</td>
-                    <td>40,00 €</td>
-                </tr>
-                <tr>
-                    <td>20 Foto</td>
-                    <td>60,00 €</td>
-                </tr>
-            </table>
+        <!-- Info acquisto -->
+        <main>
+            <section class="info-acquisto">
+                <div class="info-grid">
+                    <div class="info-steps">
+                        <h3 class="info-heading">Come ordinare</h3>
+                        <div class="steps">
+                            <div class="step">
+                                <div class="step-num">01</div>
+                                <p>Scegli le foto preferite e segna il <strong>nome del file</strong> che trovi sotto ogni immagine.</p>
+                            </div>
+                            <div class="step">
+                                <div class="step-num">02</div>
+                                <p>Scrivi la lista a <a href="mailto:irene.gambuzzi@gmail.com" class="mail-link">irene.gambuzzi@gmail.com</a> oppure su WhatsApp al <strong>345 5021840</strong>.</p>
+                            </div>
+                            <div class="step">
+                                <div class="step-num">03</div>
+                                <p>Riceverai le istruzioni per il pagamento.</p>
+                            </div>
+                            <div class="step">
+                                <div class="step-num">04</div>
+                                <p>Dopo il pagamento ricevi i file in <strong>alta risoluzione, senza logo</strong>.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-pricing">
+                        <h3 class="info-heading">Listino</h3>
+                        <table class="price-table">
+                            <tr><th>Quantità</th><th>Prezzo</th></tr>
+                            <tr><td>1 foto</td><td>8,00 €</td></tr>
+                            <tr><td>3 foto</td><td>18,00 €</td></tr>
+                            <tr><td>5 foto</td><td>25,00 €</td></tr>
+                            <tr><td>10 foto</td><td>40,00 €</td></tr>
+                            <tr><td>20 foto</td><td>60,00 €</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
 
-            <h3>Come ordinare</h3>
-            <ul>
-                <li>Scegli le tue foto preferite e segna il <strong>nome del file</strong>.</li>
-                <li>Invia la lista con i nomi dei file via mail a <a href="mailto:irene.gambuzzi@gmail.com" class="mail-link">irene.gambuzzi@gmail.com</a> o tramite messaggio WhatsApp al numero <strong>345 5021840</strong>.</li>
-                <li>Riceverai le istruzioni per il pagamento in risposta.</li>
-                <li>Una volta completato il pagamento, riceverai i file in alta risoluzione e senza logo.</li>
-            </ul>
-        </section>
-    </main>
+    </div><!-- /home-view -->
 
-    <!-- Vista Griglia (Nascosta inizialmente) -->
-    <section id="grid-view">
+    <!-- ================================================
+         Vista 2: Selezione Turno
+         ================================================ -->
+    <div id="schedule-view" style="display:none">
         <div class="sticky-nav">
-            <button class="btn" onclick="backToSchedule()">&larr; Torna alla Home</button>
+            <button class="btn btn-ghost" onclick="goToHome()">&larr; Torna agli eventi</button>
         </div>
-        <h2 id="grid-title" style="text-align: center; color: #969B80;"></h2>
-        <div class="photo-grid" id="photo-grid"></div>
+        <!-- Pannelli turno generati da JS -->
+        <div id="turns-panels" class="turns-panels"></div>
+        <p class="turns-hint">Seleziona il turno per vedere le foto</p>
+    </div>
+
+    <!-- ================================================
+         Vista 3: Griglia Foto
+         ================================================ -->
+    <section id="grid-view" style="display:none">
+        <div class="sticky-nav">
+            <button class="btn btn-ghost" id="back-btn" onclick="backToSchedule()">&larr; Torna indietro</button>
+        </div>
+        <!-- Banner contestuale (evento → turno) -->
+        <div id="event-context" class="event-context"></div>
+        <div class="grid-content">
+            <div class="grid-header">
+                <h2 id="grid-title"></h2>
+                <p id="grid-subtitle"></p>
+                <p class="grid-copy-hint">Apri una foto &rarr; tocca il nome del file per copiarlo &rarr; comunicalo alla fotografa</p>
+            </div>
+            <div class="photo-grid" id="photo-grid"></div>
+        </div>
     </section>
 
+    <button id="scroll-top" aria-label="Torna su" onclick="window.scrollTo({top:0,behavior:'smooth'})">&#8679;</button>
+
     <footer>
-        <p>&copy; 2026 Irene Gambuzzi Fotografia</p>
-        <!-- Inserisci qui il link al tuo profilo vero -->
-        <a href="https://www.instagram.com/odioirenegambuzzi/" target="_blank" class="social-link">Seguimi su Instagram</a>
+        <img src="assets/logo.png" alt="Logo" class="footer-logo">
+        <p class="footer-copy">&copy; 2026 Irene Gambuzzi Fotografia</p>
+        <a href="https://www.instagram.com/odioirenegambuzzi/" target="_blank" class="social-link">Instagram &rarr;</a>
     </footer>
 
     <script>
-        // --- CONFIGURAZIONE ---
-        const PASSWORD_CORRETTA = "ritmica2026"; // Password da dare ai genitori
-        
-        const photos = {
-            // ORE 09:00 - 1ª Fascia Base
-            'turno1': Array.from({ length: 1060 }, (_, i) => `foto/turno1/RITMICA__${String(i + 1).padStart(4, '0')}.jpg`),
-            // ORE 11:45 - 2ª Fascia Avanzato
-            'turno2': Array.from({ length: 690 }, (_, i) => `foto/turno2/RITMICA__${String(i + 1061).padStart(4, '0')}.jpg`),
-            // ORE 14:00 - 2ª Fascia Base
-            'turno3': Array.from({ length: 713 }, (_, i) => `foto/turno3/RITMICA__${String(i + 1751).padStart(4, '0')}.jpg`),
-            // ORE 16:30 - 1ª Fascia Avanzato / 3ª Base
-            'turno4': Array.from({ length: 476 }, (_, i) => `foto/turno4/RITMICA__${String(i + 2464).padStart(4, '0')}.jpg`)
+        const PASSWORD_CORRETTA = "ritmica2026";
+
+        // ============================================================
+        // CONFIGURAZIONE
+        // ============================================================
+        const events = {
+            'gara': {
+                title: 'Gara di Ginnastica Ritmica',
+                date: '22 Marzo 2026',
+                panelClass: 'competition',
+                turns: [
+                    { key: 'turno1', time: 'ORE 09:00', label: '1ª Fascia Base',                subtitle: 'Individuale e Squadre' },
+                    { key: 'turno2', time: 'ORE 11:45', label: '2ª Fascia Avanzato',            subtitle: 'Individuale e Squadre' },
+                    { key: 'turno3', time: 'ORE 14:00', label: '2ª Fascia Base',                subtitle: 'Individuale e Squadre' },
+                    { key: 'turno4', time: 'ORE 16:30', label: '1ª Fascia Avanzato / 3ª Base',  subtitle: 'Individuale e Squadre' }
+                ]
+            },
+            'saggio': {
+                title: 'Saggio di Fine Anno',
+                date: '21 Maggio 2026',
+                panelClass: 'recital',
+                turns: [
+                    { key: 'saggio1', time: '', label: 'Tutti i Gruppi', subtitle: 'Saggio finale' }
+                ]
+            }
         };
 
-        let currentTurn = [];
-        let currentIndex = 0;
+        const photos = {
+            'turno1': Array.from({ length: 1060 }, (_, i) => `foto/turno1/RITMICA__${String(i + 1).padStart(4, '0')}.jpg`),
+            'turno2': Array.from({ length: 690  }, (_, i) => `foto/turno2/RITMICA__${String(i + 1061).padStart(4, '0')}.jpg`),
+            'turno3': Array.from({ length: 713  }, (_, i) => `foto/turno3/RITMICA__${String(i + 1751).padStart(4, '0')}.jpg`),
+            'turno4': Array.from({ length: 476  }, (_, i) => `foto/turno4/RITMICA__${String(i + 2464).padStart(4, '0')}.jpg`),
+            'saggio1': Array.from({ length: 528 }, (_, i) => `foto/saggio1/SAGGIO-RITMICA-${String(i + 1).padStart(3, '0')}.jpg`),
+        };
 
-        // Controlla se l'utente è già autenticato all'apertura della pagina
+        // ============================================================
+        let currentTurn     = [];
+        let currentIndex    = 0;
+        let skippedSchedule = false;
+        let currentEventKey = null;
+
         if (sessionStorage.getItem('auth_ritmica') === 'true') {
             document.getElementById('login-overlay').style.display = 'none';
         }
 
-        // --- LOGICA LOGIN ---
+        // --- LOGIN ---
         function checkPassword() {
-            const input = document.getElementById('password-input').value;
-            if (input === PASSWORD_CORRETTA) {
-                // Salva lo stato di autenticazione nella sessione
+            if (document.getElementById('password-input').value === PASSWORD_CORRETTA) {
                 sessionStorage.setItem('auth_ritmica', 'true');
                 document.getElementById('login-overlay').style.display = 'none';
             } else {
                 document.getElementById('error-msg').style.display = 'block';
             }
         }
-
-        // Consenti invio con tasto Enter
-        document.getElementById('password-input').addEventListener("keypress", function(event) {
-            if (event.key === "Enter") checkPassword();
+        document.getElementById('password-input').addEventListener('keypress', e => {
+            if (e.key === 'Enter') checkPassword();
         });
 
-        // --- LOGICA GALLERIA ---
-        function backToSchedule() {
-            closeGallery(); // Chiude la modale se aperta
-            document.getElementById('grid-view').style.display = 'none';
-            document.getElementById('main-content').style.display = 'block';
+        // --- FISARMONICA (riutilizzabile) ---
+        function setupAccordion(panels, wrapper) {
+            if (window.matchMedia('(hover: none)').matches) return;
+            panels.forEach(panel => {
+                panel.addEventListener('mouseenter', function() {
+                    panels.forEach(p => {
+                        p.classList.toggle('panel-expand', p === this);
+                        p.classList.toggle('panel-shrink', p !== this);
+                    });
+                });
+            });
+            wrapper.addEventListener('mouseleave', () => {
+                panels.forEach(p => p.classList.remove('panel-expand', 'panel-shrink'));
+            });
+        }
+
+        // Fisarmonica homepage
+        setupAccordion(
+            document.querySelectorAll('#events-panels .event-panel'),
+            document.getElementById('events-panels')
+        );
+
+        // --- ANIMAZIONE INTRO (word-by-word) ---
+        (function() {
+            const h = document.querySelector('.intro-heading');
+            if (!h) return;
+            h.innerHTML = h.textContent.split(' ')
+                .map((w, i) => `<span class="intro-word" style="transition-delay:${i*0.12+0.1}s">${w}</span>`)
+                .join(' ');
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                h.querySelectorAll('.intro-word').forEach(s => s.classList.add('visible'));
+            }));
+        })();
+
+        // --- SCROLL-REVEAL ---
+        (function() {
+            const obs = new IntersectionObserver(entries => {
+                entries.forEach(e => {
+                    if (e.isIntersecting) { e.target.classList.add('revealed'); obs.unobserve(e.target); }
+                });
+            }, { threshold: 0.12 });
+            document.querySelectorAll('.step').forEach((el, i) => {
+                el.style.transitionDelay = `${i * 0.1}s`;
+                obs.observe(el);
+            });
+            ['.info-pricing', '.info-heading'].forEach(sel =>
+                document.querySelectorAll(sel).forEach(el => obs.observe(el))
+            );
+        })();
+
+        // --- HELPER: mostra vista con animazione ---
+        function showView(id) {
+            const el = document.getElementById(id);
+            el.style.display = 'block';
+            el.classList.remove('animate-in');
+            void el.offsetWidth;
+            el.classList.add('animate-in');
+        }
+
+        function updateHeader(title, date) {
+            document.getElementById('header-title').innerText = title;
+            document.getElementById('header-date').innerText  = date || '';
+        }
+
+        // --- NAVIGAZIONE ---
+        function goToHome() {
+            closeGallery();
+            ['grid-view','schedule-view'].forEach(id => {
+                document.getElementById(id).style.display = 'none';
+            });
+            updateHeader('Irene Gambuzzi Fotografia', '');
+            showView('home-view');
             window.scrollTo(0, 0);
         }
 
-        function openGallery(turnKey) {
-            currentTurn = photos[turnKey];
-            if (!currentTurn || currentTurn.length === 0) {
-                alert("Foto non ancora disponibili per questo turno.");
+        function openEvent(eventKey) {
+            currentEventKey = eventKey;
+            const event     = events[eventKey];
+            updateHeader(event.title, event.date);
+
+            // Evento a turno singolo: vai diretto alla galleria
+            if (event.turns.length === 1) {
+                skippedSchedule = true;
+                document.getElementById('home-view').style.display = 'none';
+                openGallery(event.turns[0].key, event.turns[0].label);
                 return;
             }
-            
-            const gridContainer = document.getElementById('photo-grid');
-            gridContainer.innerHTML = ''; // Pulisce la griglia
-            
-            // Imposta titolo turno
-            const titles = { 'turno1': '1ª Fascia Base', 'turno2': '2ª Fascia Avanzato', 'turno3': '2ª Fascia Base', 'turno4': '1ª Fascia/3ª Base' };
-            document.getElementById('grid-title').innerText = titles[turnKey] || 'Galleria';
 
-            // Crea le miniature
+            skippedSchedule = false;
+
+            // Costruisce i pannelli turno
+            const container = document.getElementById('turns-panels');
+            container.innerHTML = '';
+
+            event.turns.forEach(turn => {
+                const panel = document.createElement('div');
+                panel.className = `turn-panel ${event.panelClass}`;
+
+                // Numero decorativo (ora) in background
+                const hour = turn.time ? turn.time.replace('ORE ', '').split(':')[0] : '';
+                if (hour) panel.dataset.deco = hour;
+
+                const inner = document.createElement('div');
+                inner.className = 'panel-inner';
+
+                const tag = document.createElement('span');
+                tag.className = 'panel-tag';
+                tag.textContent = turn.time || 'Turno';
+
+                const body = document.createElement('div');
+                body.className = 'panel-body';
+
+                const title = document.createElement('h2');
+                title.className = 'panel-title';
+                title.textContent = turn.label;
+                body.appendChild(title);
+
+                if (turn.subtitle) {
+                    const meta = document.createElement('p');
+                    meta.className = 'panel-meta';
+                    meta.textContent = turn.subtitle;
+                    body.appendChild(meta);
+                }
+
+                const cta = document.createElement('div');
+                cta.className = 'panel-cta';
+                cta.textContent = 'Vedi le foto ';
+                const arrow = document.createElement('span');
+                arrow.className = 'panel-arrow';
+                arrow.textContent = '→';
+                cta.appendChild(arrow);
+
+                inner.appendChild(tag);
+                inner.appendChild(body);
+                inner.appendChild(cta);
+                panel.appendChild(inner);
+                panel.onclick = () => openGallery(turn.key, turn.label);
+                container.appendChild(panel);
+            });
+
+            // Fisarmonica sui pannelli turno
+            setupAccordion(container.querySelectorAll('.turn-panel'), container);
+
+            document.getElementById('home-view').style.display = 'none';
+            showView('schedule-view');
+            window.scrollTo(0, 0);
+        }
+
+        function backToSchedule() {
+            closeGallery();
+            document.getElementById('grid-view').style.display = 'none';
+            if (skippedSchedule) { goToHome(); return; }
+            showView('schedule-view');
+            window.scrollTo(0, 0);
+        }
+
+        // --- GALLERIA ---
+        function openGallery(turnKey, turnLabel) {
+            currentTurn = photos[turnKey];
+            if (!currentTurn || currentTurn.length === 0) {
+                alert('Foto non ancora disponibili per questo turno.');
+                return;
+            }
+
+            const event = events[currentEventKey];
+
+            // Context banner
+            const ctx = document.getElementById('event-context');
+            ctx.className = `event-context ${event.panelClass}`;
+            ctx.innerHTML = '';
+            const evSpan = document.createElement('span');
+            evSpan.className = 'ctx-event';
+            evSpan.textContent = event.title;
+            const sep = document.createElement('span');
+            sep.className = 'ctx-sep';
+            sep.textContent = '→';
+            const tnSpan = document.createElement('span');
+            tnSpan.className = 'ctx-turn';
+            tnSpan.textContent = turnLabel;
+            ctx.appendChild(evSpan);
+            ctx.appendChild(sep);
+            ctx.appendChild(tnSpan);
+
+            // Titolo e contatore foto
+            document.getElementById('grid-title').textContent = turnLabel;
+            document.getElementById('grid-subtitle').textContent =
+                `${currentTurn.length.toLocaleString('it-IT')} foto disponibili`;
+
+            // Tasto indietro
+            document.getElementById('back-btn').textContent =
+                skippedSchedule ? '← Torna agli eventi' : '← Torna ai turni';
+
+            // Griglia miniature
+            const grid = document.getElementById('photo-grid');
+            grid.innerHTML = '';
+            const frag = document.createDocumentFragment();
             currentTurn.forEach((imgUrl, index) => {
                 const div = document.createElement('div');
                 div.className = 'thumb-container';
                 div.onclick = () => openLightbox(index);
-                div.innerHTML = `<img src="${imgUrl}" loading="lazy" alt="Provino">`;
-                gridContainer.appendChild(div);
+                const img = document.createElement('img');
+                img.src = imgUrl; img.loading = 'lazy'; img.alt = 'Provino';
+                img.onload = function() { this.classList.add('loaded'); };
+                if (img.complete) img.classList.add('loaded');
+                div.appendChild(img);
+                frag.appendChild(div);
             });
+            grid.appendChild(frag);
 
-            document.getElementById('main-content').style.display = 'none';
-            document.getElementById('grid-view').style.display = 'block';
+            document.getElementById('schedule-view').style.display = 'none';
+            showView('grid-view');
+            window.scrollTo(0, 0);
         }
 
+        // --- LIGHTBOX ---
         function openLightbox(index) {
             currentIndex = index;
+            document.getElementById('gallery-image').style.opacity = '1';
             updateModalImage();
             document.getElementById('gallery-modal').style.display = 'flex';
         }
 
         function closeGallery() {
             document.getElementById('gallery-modal').style.display = 'none';
+            deactivateScreenshotGuard();
         }
 
         function updateModalImage() {
             const imgUrl = currentTurn[currentIndex];
-            const imgElement = document.getElementById('gallery-image');
-            const fileNameElement = document.getElementById('file-name');
-            const counterElement = document.getElementById('gallery-counter');
-
-            imgElement.src = imgUrl;
-            
-            // Estrae il nome del file dall'URL per mostrarlo ai genitori
-            // Se usi placeholder usa l'URL intero, se usi file reali mostrerà solo il nome
-            let filename = imgUrl.substring(imgUrl.lastIndexOf('/') + 1);
-            // Rimuove parametri extra se presenti (opzionale)
-            if(filename.includes('?')) filename = filename.split('?')[0];
-            
-            fileNameElement.innerText = filename;
-            counterElement.innerText = `Foto ${currentIndex + 1} di ${currentTurn.length}`;
-        }
-
-        function copyFileName() {
-            const fileName = document.getElementById('file-name').innerText;
-            navigator.clipboard.writeText(fileName).then(() => {
-                const copyBtn = document.querySelector('.copy-btn');
-                const originalText = copyBtn.innerText;
-                copyBtn.innerText = 'Copiato!';
-                copyBtn.style.background = '#7d816a';
-                setTimeout(() => {
-                    copyBtn.innerText = originalText;
-                    copyBtn.style.background = '#969B80';
-                }, 1500);
-            }).catch(err => {
-                console.error('Errore nel copiare il testo: ', err);
+            const imgEl  = document.getElementById('gallery-image');
+            imgEl.classList.remove('guard-active');
+            imgEl.style.opacity = '0';
+            imgEl.src = imgUrl;
+            imgEl.onload = () => { imgEl.style.opacity = '1'; };
+            if (imgEl.complete) imgEl.style.opacity = '1';
+            let fn = imgUrl.substring(imgUrl.lastIndexOf('/') + 1);
+            if (fn.includes('?')) fn = fn.split('?')[0];
+            document.getElementById('file-name').innerText = fn;
+            document.getElementById('gallery-counter').innerText = `${currentIndex + 1} / ${currentTurn.length}`;
+            document.getElementById('gallery-progress').style.width =
+                `${(currentIndex + 1) / currentTurn.length * 100}%`;
+            [1, -1].forEach(d => {
+                (new Image()).src = currentTurn[(currentIndex + d + currentTurn.length) % currentTurn.length];
             });
         }
 
-        function nextPhoto() {
-            if (currentIndex < currentTurn.length - 1) {
-                currentIndex++;
-                updateModalImage();
-            } else {
-                // Opzionale: torna all'inizio o ferma
-                currentIndex = 0; // Loop
-                updateModalImage();
-            }
+        function copyFileName() {
+            navigator.clipboard.writeText(document.getElementById('file-name').innerText).then(() => {
+                const toast = document.getElementById('copy-toast');
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2200);
+            }).catch(() => {});
         }
 
-        function prevPhoto() {
-            if (currentIndex > 0) {
-                currentIndex--;
-                updateModalImage();
-            } else {
-                currentIndex = currentTurn.length - 1; // Loop
-                updateModalImage();
-            }
+        function activateScreenshotGuard() {
+            document.getElementById('gallery-image').classList.add('guard-active');
         }
+        function deactivateScreenshotGuard() {
+            document.getElementById('gallery-image').classList.remove('guard-active');
+        }
+
+        function nextPhoto() { currentIndex = (currentIndex + 1) % currentTurn.length; updateModalImage(); }
+        function prevPhoto() { currentIndex = (currentIndex - 1 + currentTurn.length) % currentTurn.length; updateModalImage(); }
 
         function showScreenshotWarning() {
-            document.getElementById('screenshot-warning').style.display = 'block';
+            document.getElementById('screenshot-backdrop').style.display = 'block';
+            document.getElementById('screenshot-warning').style.display  = 'block';
         }
-
         function closeWarning() {
-            document.getElementById('screenshot-warning').style.display = 'none';
+            document.getElementById('screenshot-backdrop').style.display = 'none';
+            document.getElementById('screenshot-warning').style.display  = 'none';
         }
 
-        // Blocca tasti di scelta rapida comuni (Salva, Visualizza sorgente, PrintScreen)
+        // Ripple
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('.btn');
+            if (!btn) return;
+            const r = document.createElement('span'), rc = btn.getBoundingClientRect();
+            r.className = 'ripple';
+            r.style.left = `${e.clientX - rc.left}px`;
+            r.style.top  = `${e.clientY - rc.top}px`;
+            btn.appendChild(r);
+            setTimeout(() => r.remove(), 600);
+        });
+
+        // Swipe mobile lightbox
+        (function() {
+            let sx = 0, sy = 0;
+            const m = document.getElementById('gallery-modal');
+            m.addEventListener('touchstart', e => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
+            m.addEventListener('touchend',   e => {
+                const dx = sx - e.changedTouches[0].clientX, dy = sy - e.changedTouches[0].clientY;
+                if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 45) dx > 0 ? nextPhoto() : prevPhoto();
+            }, { passive: true });
+        })();
+
+        // Tastiera
         document.addEventListener('keydown', function(e) {
-            // Navigazione tastiera per la galleria (migliora la fluidità)
-            if (document.getElementById('gallery-modal').style.display === 'flex') {
-                if (e.key === 'ArrowRight') {
-                    nextPhoto();
-                    return;
-                }
-                if (e.key === 'ArrowLeft') {
-                    prevPhoto();
-                    return;
-                }
-                if (e.key === 'Escape') {
-                    closeGallery();
-                    return;
-                }
+            const modalOpen = document.getElementById('gallery-modal').style.display === 'flex';
+            if (modalOpen) {
+                if (e.key === 'ArrowRight') { nextPhoto(); return; }
+                if (e.key === 'ArrowLeft')  { prevPhoto(); return; }
+                if (e.key === 'Escape')     { closeGallery(); return; }
             }
-
-            if (
-                (e.ctrlKey && (e.key === 's' || e.key === 'u' || e.key === 'p')) || 
-                e.key === 'PrintScreen' || 
-                e.keyCode === 44 || // Altro codice per PrintScreen
-                (e.metaKey && e.shiftKey && (e.key === '3' || e.key === '4')) // Scorciatoie Mac
-            ) {
+            if ((e.ctrlKey && (e.key==='s'||e.key==='u'||e.key==='p')) ||
+                e.key==='PrintScreen' || e.keyCode===44 ||
+                (e.metaKey && e.shiftKey && (e.key==='3'||e.key==='4'))) {
                 e.preventDefault();
-                showScreenshotWarning();
-                return false;
-            }
-        });
-
-        // Rileva quando la pagina perde visibilità (es. screenshot su iOS o cambio app)
-        document.addEventListener("visibilitychange", function() {
-            if (document.visibilityState === "hidden") {
+                if (modalOpen) activateScreenshotGuard();
                 showScreenshotWarning();
             }
         });
+        document.addEventListener('keyup', function(e) {
+            if (e.key === 'PrintScreen' || e.keyCode === 44) {
+                setTimeout(deactivateScreenshotGuard, 800);
+            }
+        });
 
-        // Opzionale: rileva anche la perdita di focus della finestra
-        window.addEventListener("blur", showScreenshotWarning);
+        // Screenshot mobile (iOS: schermo si nasconde brevemente per il capture)
+        if (window.matchMedia('(hover: none)').matches) {
+            let hiddenAt = 0;
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden) {
+                    hiddenAt = Date.now();
+                } else if (Date.now() - hiddenAt < 900 &&
+                           document.getElementById('gallery-modal').style.display === 'flex') {
+                    activateScreenshotGuard();
+                    showScreenshotWarning();
+                    setTimeout(deactivateScreenshotGuard, 2500);
+                }
+            });
+        }
+
+        // Scroll-top button
+        window.addEventListener('scroll', () => {
+            document.getElementById('scroll-top').classList.toggle('visible', window.scrollY > 350);
+        }, { passive: true });
     </script>
 </body>
 </html>
